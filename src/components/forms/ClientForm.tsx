@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +22,10 @@ export const ClientForm: React.FC<ClientFormProps> = ({ onClose, client, mode = 
     address: client?.address || '',
     cpf: client?.cpf || '',
     birthDate: client?.birthDate || '',
+    document: client?.document || '',
+    type: client?.type || 'Pessoa Física',
+    status: client?.status || 'Ativo',
+    lastContact: client?.lastContact || new Date().toLocaleDateString('pt-BR'),
   });
   
   const [documents, setDocuments] = useState<{title: string, description: string, file: File | null}[]>([
@@ -141,11 +144,11 @@ export const ClientForm: React.FC<ClientFormProps> = ({ onClose, client, mode = 
               />
             </div>
             <div>
-              <Label htmlFor="cpf">CPF</Label>
+              <Label htmlFor="cpf">CPF/CNPJ</Label>
               <Input
                 id="cpf"
                 value={formData.cpf}
-                onChange={(e) => setFormData({...formData, cpf: e.target.value})}
+                onChange={(e) => setFormData({...formData, cpf: e.target.value, document: e.target.value})}
                 placeholder="000.000.000-00"
                 required
               />
@@ -162,6 +165,18 @@ export const ClientForm: React.FC<ClientFormProps> = ({ onClose, client, mode = 
                 placeholder="DD/MM/AAAA"
                 required
               />
+            </div>
+            <div>
+              <Label htmlFor="type">Tipo</Label>
+              <select 
+                id="type"
+                value={formData.type}
+                onChange={(e) => setFormData({...formData, type: e.target.value})}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="Pessoa Física">Pessoa Física</option>
+                <option value="Pessoa Jurídica">Pessoa Jurídica</option>
+              </select>
             </div>
           </div>
 

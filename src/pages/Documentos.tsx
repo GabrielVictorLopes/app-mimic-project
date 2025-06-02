@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -96,39 +95,39 @@ const Documentos = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {documents.map((doc, index) => (
+                  {documents.map((document, index) => (
                     <tr key={index} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-3">
-                          {getFileIcon(doc.format)}
+                          {getFileIcon(document.format)}
                           <div>
-                            <span className="font-medium text-gray-900 dark:text-white block">{doc.name}</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">{doc.format}</span>
+                            <span className="font-medium text-gray-900 dark:text-white block">{document.name}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">{document.format}</span>
                           </div>
                         </div>
                       </td>
                       <td className="py-4 px-4">
-                        <span className="text-gray-600 dark:text-gray-300">{doc.type}</span>
+                        <span className="text-gray-600 dark:text-gray-300">{document.type}</span>
                       </td>
                       <td className="py-4 px-4">
-                        <span className="font-medium text-blue-600 dark:text-blue-400">{doc.case}</span>
+                        <span className="font-medium text-blue-600 dark:text-blue-400">{document.case}</span>
                       </td>
                       <td className="py-4 px-4">
-                        <span className="text-gray-600 dark:text-gray-300">{doc.client}</span>
+                        <span className="text-gray-600 dark:text-gray-300">{document.client}</span>
                       </td>
                       <td className="py-4 px-4">
-                        <span className="text-gray-500 dark:text-gray-400 text-sm">{doc.size}</span>
+                        <span className="text-gray-500 dark:text-gray-400 text-sm">{document.size}</span>
                       </td>
                       <td className="py-4 px-4">
-                        <Badge className={getStatusColor(doc.status)}>
-                          {doc.status}
+                        <Badge className={getStatusColor(document.status)}>
+                          {document.status}
                         </Badge>
                       </td>
                       <td className="py-4 px-4">
-                        <span className="text-gray-600 dark:text-gray-300 text-sm">{doc.uploadedBy}</span>
+                        <span className="text-gray-600 dark:text-gray-300 text-sm">{document.uploadedBy}</span>
                       </td>
                       <td className="py-4 px-4">
-                        <span className="text-gray-500 dark:text-gray-400 text-sm">{doc.uploadedAt}</span>
+                        <span className="text-gray-500 dark:text-gray-400 text-sm">{document.createdAt}</span>
                       </td>
                       <td className="py-4 px-4 text-right">
                         <div className="flex gap-1 justify-end">

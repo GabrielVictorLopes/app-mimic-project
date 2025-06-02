@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface Client {
@@ -73,6 +72,7 @@ interface AppContextType {
   addClient: (client: Omit<Client, 'id' | 'documents' | 'cases' | 'created'>) => void;
   updateClient: (id: string, client: Partial<Client>) => void;
   addDocument: (document: Omit<DocumentFile, 'id' | 'createdAt'>) => void;
+  addDocumentToClient: (clientId: string, document: { title: string; description: string; fileName: string; createdAt: string }) => void;
   addCase: (case_: Omit<Case, 'id' | 'created'>) => void;
   updateCase: (id: string, case_: Partial<Case>) => void;
   getCaseById: (id: string) => Case | undefined;
@@ -279,6 +279,22 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setDocuments(prev => [...prev, newDocument]);
   };
 
+  const addDocumentToClient = (clientId: string, document: { title: string; description: string; fileName: string; createdAt: string }) => {
+    const newDocument: DocumentFile = {
+      id: Date.now().toString(),
+      name: document.title,
+      type: 'Documento Pessoal',
+      format: 'PDF',
+      case: '',
+      client: clients.find(c => c.id === clientId)?.name || '',
+      uploadedBy: 'Sistema',
+      status: 'Pendente',
+      size: '1.0 MB',
+      createdAt: document.createdAt
+    };
+    setDocuments(prev => [...prev, newDocument]);
+  };
+
   const addCase = (case_: Omit<Case, 'id' | 'created'>) => {
     const newCase: Case = {
       ...case_,
@@ -358,6 +374,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       addClient,
       updateClient,
       addDocument,
+      addDocumentToClient,
       addCase,
       updateCase,
       getCaseById,
