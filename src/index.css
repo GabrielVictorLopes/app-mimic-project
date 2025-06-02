@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,19 +36,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -55,10 +49,10 @@
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 217.2 32.6% 17.5%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 217.2 32.6% 17.5%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 210 40% 98%;
@@ -79,6 +73,7 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+    
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -97,5 +92,66 @@
 
   body {
     @apply bg-background text-foreground;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Melhorias para o tema escuro */
+  .dark {
+    color-scheme: dark;
+  }
+  
+  .dark input,
+  .dark textarea,
+  .dark select {
+    background-color: rgb(55 65 81);
+    border-color: rgb(75 85 99);
+    color: rgb(255 255 255);
+  }
+  
+  .dark input:focus,
+  .dark textarea:focus,
+  .dark select:focus {
+    border-color: rgb(59 130 246);
+    box-shadow: 0 0 0 1px rgb(59 130 246);
+  }
+  
+  .dark .rdp {
+    --rdp-cell-size: 40px;
+    --rdp-accent-color: rgb(59 130 246);
+    --rdp-background-color: rgb(31 41 55);
+    --rdp-outline: 2px solid var(--rdp-accent-color);
+    color: rgb(255 255 255);
+  }
+  
+  .dark .rdp-day_selected {
+    background-color: rgb(59 130 246);
+    color: white;
+  }
+  
+  .dark .rdp-day:hover:not(.rdp-day_selected) {
+    background-color: rgb(55 65 81);
+  }
+  
+  .dark .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+    background-color: rgb(55 65 81);
+  }
+  
+  /* Scrollbar escura */
+  .dark ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .dark ::-webkit-scrollbar-track {
+    background: rgb(31 41 55);
+  }
+  
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgb(75 85 99);
+    border-radius: 4px;
+  }
+  
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: rgb(107 114 128);
   }
 }
