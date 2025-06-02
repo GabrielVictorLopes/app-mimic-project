@@ -9,15 +9,25 @@ interface Client {
   address: string;
   cpf: string;
   birthDate: string;
-  documents: Document[];
+  document: string; // CPF/CNPJ formatado
+  type: string; // Pessoa Física/Jurídica
+  status: string; // Ativo/Inativo
+  cases: number; // Número de casos
+  lastContact: string; // Data do último contato
+  created: string; // Data de criação
+  documents: DocumentFile[];
 }
 
-interface Document {
+interface DocumentFile {
   id: string;
-  title: string;
-  description: string;
-  file?: File;
-  fileName?: string;
+  name: string;
+  type: string;
+  format: string;
+  case: string;
+  client: string;
+  uploadedBy: string;
+  status: string;
+  size: string;
   createdAt: string;
 }
 
@@ -59,9 +69,10 @@ interface AppContextType {
   clients: Client[];
   cases: Case[];
   appointments: Appointment[];
-  addClient: (client: Omit<Client, 'id' | 'documents'>) => void;
+  documents: DocumentFile[];
+  addClient: (client: Omit<Client, 'id' | 'documents' | 'cases' | 'created'>) => void;
   updateClient: (id: string, client: Partial<Client>) => void;
-  addDocumentToClient: (clientId: string, document: Omit<Document, 'id'>) => void;
+  addDocument: (document: Omit<DocumentFile, 'id' | 'createdAt'>) => void;
   addCase: (case_: Omit<Case, 'id' | 'created'>) => void;
   updateCase: (id: string, case_: Partial<Case>) => void;
   getCaseById: (id: string) => Case | undefined;
@@ -81,22 +92,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       address: 'Rua das Flores, 123, São Paulo - SP',
       cpf: '123.456.789-00',
       birthDate: '15/03/1985',
-      documents: [
-        {
-          id: '1',
-          title: 'RG',
-          description: 'Documento de identidade',
-          fileName: 'rg_maria.pdf',
-          createdAt: '15/03/2024'
-        },
-        {
-          id: '2',
-          title: 'Contrato de Trabalho',
-          description: 'Contrato vigente',
-          fileName: 'contrato_maria.pdf',
-          createdAt: '10/03/2024'
-        }
-      ]
+      document: '123.456.789-00',
+      type: 'Pessoa Física',
+      status: 'Ativo',
+      cases: 2,
+      lastContact: '15/03/2024',
+      created: '01/01/2024',
+      documents: []
     },
     {
       id: '2',
@@ -106,15 +108,56 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       address: 'Av. Principal, 456, São Paulo - SP',
       cpf: '987.654.321-00',
       birthDate: '22/07/1978',
-      documents: [
-        {
-          id: '3',
-          title: 'CPF',
-          description: 'Cadastro de Pessoa Física',
-          fileName: 'cpf_joao.pdf',
-          createdAt: '20/03/2024'
-        }
-      ]
+      document: '987.654.321-00',
+      type: 'Pessoa Física',
+      status: 'Ativo',
+      cases: 1,
+      lastContact: '18/03/2024',
+      created: '02/01/2024',
+      documents: []
+    },
+    {
+      id: '3',
+      name: 'Empresa ABC Ltda',
+      email: 'contato@empresaabc.com',
+      phone: '(11) 77777-7777',
+      address: 'Rua Comercial, 789, São Paulo - SP',
+      cpf: '12.345.678/0001-90',
+      birthDate: '10/05/2010',
+      document: '12.345.678/0001-90',
+      type: 'Pessoa Jurídica',
+      status: 'Ativo',
+      cases: 3,
+      lastContact: '20/03/2024',
+      created: '03/01/2024',
+      documents: []
+    }
+  ]);
+
+  const [documents, setDocuments] = useState<DocumentFile[]>([
+    {
+      id: '1',
+      name: 'Contrato de Trabalho - Maria Silva',
+      type: 'Contrato',
+      format: 'PDF',
+      case: '001/2024',
+      client: 'Maria Silva Santos',
+      uploadedBy: 'Dr. Carlos Mendes',
+      status: 'Aprovado',
+      size: '2.3 MB',
+      createdAt: '15/03/2024'
+    },
+    {
+      id: '2',
+      name: 'RG - João Carlos',
+      type: 'Documento Pessoal',
+      format: 'PDF',
+      case: '002/2024',
+      client: 'João Carlos Oliveira',
+      uploadedBy: 'Dra. Ana Paula',
+      status: 'Pendente',
+      size: '1.1 MB',
+      createdAt: '18/03/2024'
     }
   ]);
 
@@ -210,11 +253,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   ]);
 
-  const addClient = (client: Omit<Client, 'id' | 'documents'>) => {
+  const addClient = (client: Omit<Client, 'id' | 'documents' | 'cases' | 'created'>) => {
     const newClient: Client = {
       ...client,
       id: Date.now().toString(),
-      documents: []
+      documents: [],
+      cases: 0,
+      created: new Date().toLocaleDateString('pt-BR')
     };
     setClients(prev => [...prev, newClient]);
   };
@@ -225,15 +270,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     ));
   };
 
-  const addDocumentToClient = (clientId: string, document: Omit<Document, 'id'>) => {
-    setClients(prev => prev.map(client => 
-      client.id === clientId 
-        ? { 
-            ...client, 
-            documents: [...client.documents, { ...document, id: Date.now().toString() }] 
-          }
-        : client
-    ));
+  const addDocument = (document: Omit<DocumentFile, 'id' | 'createdAt'>) => {
+    const newDocument: DocumentFile = {
+      ...document,
+      id: Date.now().toString(),
+      createdAt: new Date().toLocaleDateString('pt-BR')
+    };
+    setDocuments(prev => [...prev, newDocument]);
   };
 
   const addCase = (case_: Omit<Case, 'id' | 'created'>) => {
@@ -311,9 +354,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       clients,
       cases,
       appointments,
+      documents,
       addClient,
       updateClient,
-      addDocumentToClient,
+      addDocument,
       addCase,
       updateCase,
       getCaseById,
