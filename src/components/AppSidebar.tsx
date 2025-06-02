@@ -3,7 +3,6 @@ import {
   Home, 
   FileText, 
   Users, 
-  Folder, 
   Calendar, 
   BarChart3,
   Scale,
@@ -27,7 +26,7 @@ import { cn } from "@/lib/utils";
 
 const menuItems = [
   {
-    title: "Dashboard",
+    title: "Menu",
     url: "/",
     icon: Home,
   },
@@ -40,11 +39,6 @@ const menuItems = [
     title: "Clientes",
     url: "/clientes",
     icon: Users,
-  },
-  {
-    title: "Documentos",
-    url: "/documentos",
-    icon: Folder,
   },
   {
     title: "Agenda",
@@ -62,20 +56,20 @@ export function AppSidebar() {
   const location = useLocation();
 
   return (
-    <Sidebar className="border-r border-gray-200">
-      <SidebarHeader className="border-b border-gray-200 p-4">
+    <Sidebar className="border-r border-gray-200 dark:border-gray-700">
+      <SidebarHeader className="border-b border-gray-200 dark:border-gray-700 p-4">
         <div className="flex items-center gap-2">
-          <Scale className="h-8 w-8 text-blue-600" />
+          <Scale className="h-8 w-8 text-blue-600 dark:text-blue-400" />
           <div>
-            <h1 className="font-bold text-lg text-gray-900">NPJ</h1>
-            <p className="text-xs text-gray-500">Núcleo de Prática Jurídica</p>
+            <h1 className="font-bold text-lg text-gray-900 dark:text-white">NPJ</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Núcleo de Prática Jurídica</p>
           </div>
         </div>
       </SidebarHeader>
       
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-600 font-medium px-4 py-2">
+          <SidebarGroupLabel className="text-gray-600 dark:text-gray-300 font-medium px-4 py-2">
             Menu Principal
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -85,8 +79,8 @@ export function AppSidebar() {
                   <SidebarMenuButton 
                     asChild
                     className={cn(
-                      "mx-2 rounded-lg",
-                      location.pathname === item.url && "bg-blue-50 text-blue-700 border border-blue-200"
+                      "mx-2 rounded-lg transition-all duration-200",
+                      location.pathname === item.url && "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
                     )}
                   >
                     <Link to={item.url} className="flex items-center gap-3 px-3 py-2">
@@ -101,7 +95,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="border-t border-gray-200 p-4">
+      <SidebarFooter className="border-t border-gray-200 dark:border-gray-700 p-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="mx-2 rounded-lg">

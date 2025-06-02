@@ -1,6 +1,26 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+interface Client {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  cpf: string;
+  birthDate: string;
+  documents: Document[];
+}
+
+interface Document {
+  id: string;
+  title: string;
+  description: string;
+  file?: File;
+  fileName?: string;
+  createdAt: string;
+}
+
 interface Case {
   id: string;
   client: string;
@@ -10,33 +30,6 @@ interface Case {
   priority: string;
   responsible: string;
   created: string;
-  updated: string;
-}
-
-interface Client {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  document: string;
-  type: string;
-  status: string;
-  cases: number;
-  created: string;
-  lastContact: string;
-}
-
-interface Document {
-  id: string;
-  name: string;
-  type: string;
-  size: string;
-  format: string;
-  case: string;
-  client: string;
-  uploadedBy: string;
-  uploadedAt: string;
-  status: string;
 }
 
 interface Appointment {
@@ -44,162 +37,288 @@ interface Appointment {
   title: string;
   client: string;
   case: string;
+  type: string;
   date: string;
   time: string;
   duration: string;
   location: string;
-  type: string;
   status: string;
   participants: string[];
-  notes: string;
+  notes?: string;
+}
+
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  date: string;
+  type: 'deadline' | 'document' | 'agenda';
 }
 
 interface AppContextType {
-  cases: Case[];
   clients: Client[];
-  documents: Document[];
+  cases: Case[];
   appointments: Appointment[];
-  addCase: (caseData: Omit<Case, 'id' | 'created' | 'updated'>) => void;
-  addClient: (clientData: Omit<Client, 'id' | 'created' | 'lastContact' | 'cases'>) => void;
-  addDocument: (documentData: Omit<Document, 'id' | 'uploadedAt'>) => void;
-  addAppointment: (appointmentData: Omit<Appointment, 'id'>) => void;
+  addClient: (client: Omit<Client, 'id' | 'documents'>) => void;
+  updateClient: (id: string, client: Partial<Client>) => void;
+  addDocumentToClient: (clientId: string, document: Omit<Document, 'id'>) => void;
+  addCase: (case_: Omit<Case, 'id' | 'created'>) => void;
+  updateCase: (id: string, case_: Partial<Case>) => void;
+  getCaseById: (id: string) => Case | undefined;
+  addAppointment: (appointment: Omit<Appointment, 'id'>) => void;
+  getNotifications: () => Notification[];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [cases, setCases] = useState<Case[]>([
-    {
-      id: "001/2024",
-      client: "Maria Silva Santos",
-      type: "Trabalhista",
-      subject: "Rescisão indireta do contrato de trabalho",
-      status: "Em andamento",
-      priority: "Alta",
-      responsible: "Dr. João Silva",
-      created: "15/03/2024",
-      updated: "22/03/2024",
-    },
-    {
-      id: "002/2024",
-      client: "João Carlos Oliveira",
-      type: "Civil",
-      subject: "Ação de cobrança",
-      status: "Audiência marcada",
-      priority: "Média",
-      responsible: "Dra. Ana Costa",
-      created: "18/03/2024",
-      updated: "20/03/2024",
-    },
-  ]);
-
   const [clients, setClients] = useState<Client[]>([
     {
-      id: "CLI001",
-      name: "Maria Silva Santos",
-      email: "maria.santos@email.com",
-      phone: "(11) 99999-1234",
-      document: "123.456.789-00",
-      type: "Pessoa Física",
-      status: "Ativo",
-      cases: 2,
-      created: "15/01/2024",
-      lastContact: "22/03/2024",
+      id: '1',
+      name: 'Maria Silva Santos',
+      email: 'maria.silva@email.com',
+      phone: '(11) 99999-9999',
+      address: 'Rua das Flores, 123, São Paulo - SP',
+      cpf: '123.456.789-00',
+      birthDate: '15/03/1985',
+      documents: [
+        {
+          id: '1',
+          title: 'RG',
+          description: 'Documento de identidade',
+          fileName: 'rg_maria.pdf',
+          createdAt: '15/03/2024'
+        },
+        {
+          id: '2',
+          title: 'Contrato de Trabalho',
+          description: 'Contrato vigente',
+          fileName: 'contrato_maria.pdf',
+          createdAt: '10/03/2024'
+        }
+      ]
     },
     {
-      id: "CLI002",
-      name: "João Carlos Oliveira",
-      email: "joao.oliveira@email.com",
-      phone: "(11) 98888-5678",
-      document: "987.654.321-00",
-      type: "Pessoa Física",
-      status: "Ativo",
-      cases: 1,
-      created: "20/01/2024",
-      lastContact: "20/03/2024",
-    },
+      id: '2',
+      name: 'João Carlos Oliveira',
+      email: 'joao.carlos@email.com',
+      phone: '(11) 88888-8888',
+      address: 'Av. Principal, 456, São Paulo - SP',
+      cpf: '987.654.321-00',
+      birthDate: '22/07/1978',
+      documents: [
+        {
+          id: '3',
+          title: 'CPF',
+          description: 'Cadastro de Pessoa Física',
+          fileName: 'cpf_joao.pdf',
+          createdAt: '20/03/2024'
+        }
+      ]
+    }
   ]);
 
-  const [documents, setDocuments] = useState<Document[]>([
+  const [cases, setCases] = useState<Case[]>([
     {
-      id: "DOC001",
-      name: "Petição Inicial - Caso 001/2024",
-      type: "Petição",
-      size: "2.3 MB",
-      format: "PDF",
-      case: "001/2024",
-      client: "Maria Silva Santos",
-      uploadedBy: "Dr. João Silva",
-      uploadedAt: "15/03/2024 14:30",
-      status: "Aprovado",
+      id: '001/2024',
+      client: 'Maria Silva Santos',
+      type: 'Trabalhista',
+      subject: 'Ação trabalhista por rescisão indevida do contrato de trabalho',
+      status: 'Em andamento',
+      priority: 'Alta',
+      responsible: 'Dr. Carlos Mendes',
+      created: '15/03/2024'
     },
+    {
+      id: '002/2024',
+      client: 'João Carlos Oliveira',
+      type: 'Civil',
+      subject: 'Ação de cobrança de valores em aberto',
+      status: 'Audiência marcada',
+      priority: 'Média',
+      responsible: 'Dra. Ana Paula',
+      created: '18/03/2024'
+    },
+    {
+      id: '003/2024',
+      client: 'Ana Paula Costa',
+      type: 'Família',
+      subject: 'Processo de divórcio consensual',
+      status: 'Documentação',
+      priority: 'Baixa',
+      responsible: 'Dr. Roberto Silva',
+      created: '20/03/2024'
+    }
   ]);
 
   const [appointments, setAppointments] = useState<Appointment[]>([
     {
-      id: "AGD001",
-      title: "Audiência Trabalhista",
-      client: "Maria Silva Santos",
-      case: "001/2024",
-      date: "25/03/2024",
-      time: "09:00",
-      duration: "2h",
-      location: "TRT - 2ª Região",
-      type: "Audiência",
-      status: "Confirmado",
-      participants: ["Dr. João Silva", "Maria Silva Santos"],
-      notes: "Levar documentos originais do contrato de trabalho",
+      id: '1',
+      title: 'Audiência Trabalhista',
+      client: 'Maria Silva Santos',
+      case: '001/2024',
+      type: 'Audiência',
+      date: '25/03/2024',
+      time: '09:00',
+      duration: '2 horas',
+      location: 'Tribunal Regional do Trabalho',
+      status: 'Confirmado',
+      participants: ['Dr. Carlos Mendes', 'Maria Silva', 'Juiz Dr. Fernando'],
+      notes: 'Levar toda documentação trabalhista'
     },
+    {
+      id: '2',
+      title: 'Consulta Inicial',
+      client: 'João Carlos Oliveira',
+      case: '002/2024',
+      type: 'Consulta',
+      date: '26/03/2024',
+      time: '14:30',
+      duration: '1 hora',
+      location: 'Escritório NPJ',
+      status: 'Confirmado',
+      participants: ['Dra. Ana Paula', 'João Carlos'],
+      notes: 'Primeira consulta sobre ação de cobrança'
+    },
+    {
+      id: '3',
+      title: 'Mediação Familiar',
+      client: 'Ana Paula Costa',
+      case: '003/2024',
+      type: 'Mediação',
+      date: '27/03/2024',
+      time: '16:00',
+      duration: '1.5 horas',
+      location: 'Centro de Mediação',
+      status: 'Pendente',
+      participants: ['Dr. Roberto Silva', 'Ana Paula', 'Cônjuge'],
+      notes: 'Mediação para acordo de divórcio'
+    },
+    {
+      id: '4',
+      title: 'Reunião de Acompanhamento',
+      client: 'Maria Silva Santos',
+      case: '001/2024',
+      type: 'Reunião',
+      date: '28/03/2024',
+      time: '10:00',
+      duration: '45 minutos',
+      location: 'Escritório NPJ',
+      status: 'Confirmado',
+      participants: ['Dr. Carlos Mendes', 'Maria Silva'],
+      notes: 'Acompanhamento do andamento do processo'
+    }
   ]);
 
-  const addCase = (caseData: Omit<Case, 'id' | 'created' | 'updated'>) => {
-    const newCase: Case = {
-      ...caseData,
-      id: `${String(cases.length + 1).padStart(3, '0')}/2024`,
-      created: new Date().toLocaleDateString('pt-BR'),
-      updated: new Date().toLocaleDateString('pt-BR'),
-    };
-    setCases([...cases, newCase]);
-  };
-
-  const addClient = (clientData: Omit<Client, 'id' | 'created' | 'lastContact' | 'cases'>) => {
+  const addClient = (client: Omit<Client, 'id' | 'documents'>) => {
     const newClient: Client = {
-      ...clientData,
-      id: `CLI${String(clients.length + 1).padStart(3, '0')}`,
-      cases: 0,
-      created: new Date().toLocaleDateString('pt-BR'),
-      lastContact: new Date().toLocaleDateString('pt-BR'),
+      ...client,
+      id: Date.now().toString(),
+      documents: []
     };
-    setClients([...clients, newClient]);
+    setClients(prev => [...prev, newClient]);
   };
 
-  const addDocument = (documentData: Omit<Document, 'id' | 'uploadedAt'>) => {
-    const newDocument: Document = {
-      ...documentData,
-      id: `DOC${String(documents.length + 1).padStart(3, '0')}`,
-      uploadedAt: new Date().toLocaleString('pt-BR'),
-    };
-    setDocuments([...documents, newDocument]);
+  const updateClient = (id: string, updatedClient: Partial<Client>) => {
+    setClients(prev => prev.map(client => 
+      client.id === id ? { ...client, ...updatedClient } : client
+    ));
   };
 
-  const addAppointment = (appointmentData: Omit<Appointment, 'id'>) => {
+  const addDocumentToClient = (clientId: string, document: Omit<Document, 'id'>) => {
+    setClients(prev => prev.map(client => 
+      client.id === clientId 
+        ? { 
+            ...client, 
+            documents: [...client.documents, { ...document, id: Date.now().toString() }] 
+          }
+        : client
+    ));
+  };
+
+  const addCase = (case_: Omit<Case, 'id' | 'created'>) => {
+    const newCase: Case = {
+      ...case_,
+      id: `${String(cases.length + 1).padStart(3, '0')}/2024`,
+      created: new Date().toLocaleDateString('pt-BR')
+    };
+    setCases(prev => [...prev, newCase]);
+  };
+
+  const updateCase = (id: string, updatedCase: Partial<Case>) => {
+    setCases(prev => prev.map(case_ => 
+      case_.id === id ? { ...case_, ...updatedCase } : case_
+    ));
+  };
+
+  const getCaseById = (id: string) => {
+    return cases.find(case_ => case_.id === id);
+  };
+
+  const addAppointment = (appointment: Omit<Appointment, 'id'>) => {
     const newAppointment: Appointment = {
-      ...appointmentData,
-      id: `AGD${String(appointments.length + 1).padStart(3, '0')}`,
+      ...appointment,
+      id: Date.now().toString()
     };
-    setAppointments([...appointments, newAppointment]);
+    setAppointments(prev => [...prev, newAppointment]);
+  };
+
+  const getNotifications = (): Notification[] => {
+    const notifications: Notification[] = [];
+    
+    // Verificar prazos de audiências próximas (próximos 7 dias)
+    const today = new Date();
+    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    
+    appointments.forEach(appointment => {
+      const appointmentDate = new Date(appointment.date.split('/').reverse().join('-'));
+      if (appointmentDate >= today && appointmentDate <= nextWeek) {
+        notifications.push({
+          id: `agenda-${appointment.id}`,
+          title: 'Compromisso Próximo',
+          message: `${appointment.title} agendado para ${appointment.date} às ${appointment.time}`,
+          date: 'Hoje',
+          type: 'agenda'
+        });
+      }
+    });
+
+    // Notificações de casos com alta prioridade
+    cases.filter(case_ => case_.priority === 'Alta').forEach(case_ => {
+      notifications.push({
+        id: `case-${case_.id}`,
+        title: 'Caso Prioritário',
+        message: `Caso ${case_.id} (${case_.client}) requer atenção`,
+        date: 'Hoje',
+        type: 'deadline'
+      });
+    });
+
+    // Simulação de documentos com validade próxima
+    notifications.push({
+      id: 'doc-1',
+      title: 'Documento Vencendo',
+      message: 'Procuração de Maria Silva vence em 3 dias',
+      date: 'Hoje',
+      type: 'document'
+    });
+
+    return notifications;
   };
 
   return (
     <AppContext.Provider value={{
-      cases,
       clients,
-      documents,
+      cases,
       appointments,
-      addCase,
       addClient,
-      addDocument,
+      updateClient,
+      addDocumentToClient,
+      addCase,
+      updateCase,
+      getCaseById,
       addAppointment,
+      getNotifications
     }}>
       {children}
     </AppContext.Provider>

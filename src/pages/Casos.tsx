@@ -14,11 +14,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CaseForm } from "@/components/forms/CaseForm";
+import { CaseViewer } from "@/components/CaseViewer";
+import { CaseEditor } from "@/components/CaseEditor";
 import { useApp } from "@/contexts/AppContext";
 
 const Casos = () => {
   const { cases } = useApp();
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedCase, setSelectedCase] = useState<any>(null);
+  const [viewMode, setViewMode] = useState<'view' | 'edit' | null>(null);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -46,6 +50,26 @@ const Casos = () => {
       default:
         return "bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300";
     }
+  };
+
+  const handleViewCase = (case_: any) => {
+    setSelectedCase(case_);
+    setViewMode('view');
+  };
+
+  const handleEditCase = (case_: any) => {
+    setSelectedCase(case_);
+    setViewMode('edit');
+  };
+
+  const handleCloseModal = () => {
+    setSelectedCase(null);
+    setViewMode(null);
+  };
+
+  const handleSaveCase = () => {
+    setSelectedCase(null);
+    setViewMode(null);
   };
 
   return (
@@ -105,7 +129,7 @@ const Casos = () => {
                 </thead>
                 <tbody>
                   {cases.map((case_, index) => (
-                    <tr key={index} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <tr key={index} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                       <td className="py-4 px-4">
                         <span className="font-medium text-blue-600 dark:text-blue-400">{case_.id}</span>
                       </td>
@@ -116,7 +140,9 @@ const Casos = () => {
                         <span className="text-gray-600 dark:text-gray-300">{case_.type}</span>
                       </td>
                       <td className="py-4 px-4 max-w-xs">
-                        <span className="text-gray-600 dark:text-gray-300 truncate block">{case_.subject}</span>
+                        <span className="text-gray-600 dark:text-gray-300 truncate block" title={case_.subject}>
+                          {case_.subject}
+                        </span>
                       </td>
                       <td className="py-4 px-4">
                         <Badge className={getStatusColor(case_.status)}>
@@ -142,11 +168,17 @@ const Casos = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-white dark:bg-gray-800 dark:border-gray-700">
-                            <DropdownMenuItem className="dark:text-gray-300 dark:hover:bg-gray-700">
+                            <DropdownMenuItem 
+                              onClick={() => handleViewCase(case_)}
+                              className="dark:text-gray-300 dark:hover:bg-gray-700"
+                            >
                               <Eye className="h-4 w-4 mr-2" />
                               Visualizar
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="dark:text-gray-300 dark:hover:bg-gray-700">
+                            <DropdownMenuItem 
+                              onClick={() => handleEditCase(case_)}
+                              className="dark:text-gray-300 dark:hover:bg-gray-700"
+                            >
                               <Edit className="h-4 w-4 mr-2" />
                               Editar
                             </DropdownMenuItem>
@@ -161,6 +193,26 @@ const Casos = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Modal para visualizar/editar caso */}
+      <Dialog open={viewMode !== null} onOpenChange={handleCloseModal}>
+        <DialogContent className="max-w-6xl dark:bg-gray-800 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
+          {selectedCase && viewMode === 'view' && (
+            <CaseViewer 
+              case_={selectedCase} 
+              onClose={handleCloseModal}
+              onEdit={() => setViewMode('edit')}
+            />
+          )}
+          {selectedCase && viewMode === 'edit' && (
+            <CaseEditor 
+              case_={selectedCase} 
+              onClose={handleCloseModal}
+              onSave={handleSaveCase}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
