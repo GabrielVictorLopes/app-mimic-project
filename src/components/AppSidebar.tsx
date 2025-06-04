@@ -1,4 +1,3 @@
-
 import { 
   Home, 
   FileText, 
@@ -61,7 +60,7 @@ export function AppSidebar() {
         <div className="flex items-center gap-2">
           <Scale className="h-8 w-8 text-blue-600 dark:text-blue-400" />
           <div>
-            <h1 className="font-bold text-lg text-gray-900 dark:text-white">SubJustice</h1>
+            <h1 className="font-bold text-lg text-gray-900 dark:text-white">Subjudice</h1>
             <p className="text-xs text-gray-500 dark:text-gray-400">Sistema de Gestão Jurídica</p>
           </div>
         </div>
