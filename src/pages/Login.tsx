@@ -35,7 +35,7 @@ const Login = () => {
             <Scale className="h-8 w-8 text-blue-600 dark:text-blue-400" />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-            NPJ - Sistema Jurídico
+            SubJustice
           </CardTitle>
           <p className="text-gray-600 dark:text-gray-400">
             Entre com suas credenciais para acessar o sistema
