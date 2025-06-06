@@ -19,6 +19,26 @@ import { useApp } from "@/contexts/AppContext";
 const Clientes = () => {
   const { clients } = useApp();
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingClient, setEditingClient] = useState(null);
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+
+  const openCreateForm = () => {
+    setEditingClient(null);
+    setFormMode('create');
+    setIsFormOpen(true);
+  };
+
+  const openEditForm = (client: any) => {
+    setEditingClient(client);
+    setFormMode('edit');
+    setIsFormOpen(true);
+  };
+
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setEditingClient(null);
+    setFormMode('create');
+  };
 
   const getStatusColor = (status: string) => {
     return status === "Ativo" 
@@ -59,13 +79,17 @@ const Clientes = () => {
                 </div>
                 <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-blue-600 hover:bg-blue-700">
+                    <Button onClick={openCreateForm} className="bg-blue-600 hover:bg-blue-700">
                       <Plus className="h-4 w-4 mr-2" />
                       Novo Cliente
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-4xl dark:bg-gray-800 dark:border-gray-700">
-                    <ClientForm onClose={() => setIsFormOpen(false)} />
+                    <ClientForm 
+                      onClose={closeForm} 
+                      client={editingClient}
+                      mode={formMode}
+                    />
                   </DialogContent>
                 </Dialog>
               </div>
@@ -143,7 +167,10 @@ const Clientes = () => {
                               <Eye className="h-4 w-4 mr-2" />
                               Visualizar
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="dark:text-gray-300 dark:hover:bg-gray-700">
+                            <DropdownMenuItem 
+                              onClick={() => openEditForm(client)}
+                              className="dark:text-gray-300 dark:hover:bg-gray-700"
+                            >
                               <Edit className="h-4 w-4 mr-2" />
                               Editar
                             </DropdownMenuItem>
