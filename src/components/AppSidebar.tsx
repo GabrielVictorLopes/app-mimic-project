@@ -1,4 +1,3 @@
-
 import { 
   Home, 
   FileText, 
@@ -7,7 +6,7 @@ import {
   BarChart3,
   Scale,
   Settings,
-  Menu
+  Briefcase
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -42,9 +41,9 @@ const menuItems = [
     icon: Users,
   },
   {
-    title: "Menu",
+    title: "Consultoria",
     url: "/menu",
-    icon: Menu,
+    icon: Briefcase,
   },
   {
     title: "Agenda",
