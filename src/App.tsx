@@ -14,6 +14,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Casos from "./pages/Casos";
 import ClientesDocumentos from "./pages/ClientesDocumentos";
+import Menu from "./pages/Menu";
 import Agenda from "./pages/Agenda";
 import Relatorios from "./pages/Relatorios";
 import Configuracoes from "./pages/Configuracoes";
@@ -42,6 +43,7 @@ const App = () => (
                             <Route path="/" element={<Index />} />
                             <Route path="/casos" element={<Casos />} />
                             <Route path="/clientes" element={<ClientesDocumentos />} />
+                            <Route path="/menu" element={<Menu />} />
                             <Route path="/agenda" element={<Agenda />} />
                             <Route path="/relatorios" element={<Relatorios />} />
                             <Route path="/configuracoes" element={<Configuracoes />} />

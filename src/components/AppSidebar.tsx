@@ -1,3 +1,4 @@
+
 import { 
   Home, 
   FileText, 
@@ -5,7 +6,8 @@ import {
   Calendar, 
   BarChart3,
   Scale,
-  Settings
+  Settings,
+  Menu
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -38,6 +40,11 @@ const menuItems = [
     title: "Clientes",
     url: "/clientes",
     icon: Users,
+  },
+  {
+    title: "Menu",
+    url: "/menu",
+    icon: Menu,
   },
   {
     title: "Agenda",

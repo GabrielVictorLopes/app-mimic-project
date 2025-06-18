@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { X } from "lucide-react";
@@ -15,6 +16,7 @@ interface ClientFormProps {
 
 export const ClientForm: React.FC<ClientFormProps> = ({ onClose, client, mode = 'create' }) => {
   const { addClient, updateClient, addDocumentToClient } = useApp();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: client?.name || '',
     email: client?.email || '',
@@ -24,6 +26,7 @@ export const ClientForm: React.FC<ClientFormProps> = ({ onClose, client, mode = 
     birthDate: client?.birthDate || '',
     document: client?.document || '',
     type: client?.type || 'Pessoa Física',
+    area: client?.area || '',
     status: client?.status || 'Ativo',
     lastContact: client?.lastContact || new Date().toLocaleDateString('pt-BR'),
   });
@@ -70,7 +73,13 @@ export const ClientForm: React.FC<ClientFormProps> = ({ onClose, client, mode = 
       });
     }
     
-    onClose();
+    // Redirecionar se a área selecionada for "Área de Consultoria"
+    if (formData.area === 'Área de Consultoria') {
+      onClose();
+      navigate('/menu');
+    } else {
+      onClose();
+    }
   };
 
   return (
