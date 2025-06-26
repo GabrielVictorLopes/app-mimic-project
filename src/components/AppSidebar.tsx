@@ -31,11 +31,6 @@ const menuItems = [
     icon: Home,
   },
   {
-    title: "Casos",
-    url: "/casos",
-    icon: FileText,
-  },
-  {
     title: "Clientes",
     url: "/clientes",
     icon: Users,
@@ -44,6 +39,11 @@ const menuItems = [
     title: "Consultoria",
     url: "/menu",
     icon: Briefcase,
+  },
+  {
+    title: "Casos",
+    url: "/casos",
+    icon: FileText,
   },
   {
     title: "Agenda",
